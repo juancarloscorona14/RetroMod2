@@ -8,9 +8,6 @@ Este repositorio contiene una implementación básica de un clasificador de Árb
 
 - [Requisitos](#requisitos)
 - [Instrucciones de Uso](#instrucciones-de-uso)
-- [Ejemplo](#ejemplo)
-- [Autores](#autores)
-- [Licencia](#licencia)
 
 ## Requisitos
 
@@ -23,9 +20,7 @@ Este repositorio contiene una implementación básica de un clasificador de Árb
 
 https://github.com/juancarloscorona14/RetroMod2.git
 
-2. Navega al directorio del repositorio:
-
-cd RetroMod2
+2. Navega al directorio del repositorio
 
 3. Configura la ubicacion del dataset de acuerdo a la localización del archivo
 
