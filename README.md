@@ -28,3 +28,9 @@ https://github.com/juancarloscorona14/RetroMod2.git
 
 5. Si deseas cambiar los datos de prueba, por favor modifica el archivo class_arbol_decision.py
 
+## Referencias
+
+- https://ocw.mit.edu/courses/15-097-prediction-machine-learning-and-statistics-spring-2012/resources/iris/
+  
+- https://anderfernandez.com/en/blog/code-decision-tree-python-from-scratch/
+
