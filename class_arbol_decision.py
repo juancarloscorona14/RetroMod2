@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder # Para relizar encoding de la variable objetivo
 from sklearn.model_selection import train_test_split # Para separar en entrenamiento y prueba
-from sklearn.metrics import accuracy_score # Para evaluar el modelo
+from sklearn.metrics import precision_score, recall_score, f1_score, confusion_matrix, accuracy_score # Para evaluar el modelo
 
 # Implementacion del algoritmo de arbol de decision sin framework
 """ Definición de métodos del algoritmo utilizando POO"""
@@ -184,35 +184,74 @@ class DecisionTreeClassifier():
 """-----------------------------------------------------------------------------------------------"""
 
 print('Cargando Datos...\n')
-data = pd.read_csv("Evidencias\Mod2\iris.csv", index_col= False)
+data = pd.read_csv("iris.csv", index_col= False)
 data.info()
 
 # Preprocesamiento de datos
 label_encoder = LabelEncoder()
 data["type"] = label_encoder.fit_transform(data["type"])
 print('\nVista previa de los datos a utilizar:\n\n')
-print(data.head(10))
+print(data)
 
 # Separacion de los datos en entrenamiento y prueba utilizando train_test_split de sklearn
 print('\nSeparando en conjuntos de entrenamiento...\n')
 X = data.iloc[:, :-1].values
 Y = data.iloc[:, -1].values.reshape(-1,1)
-X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=.25)
+
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=.20)
 
 print('Inicializando modelo...\n')
-classifier = DecisionTreeClassifier(min_samples_split=3, max_depth=3)
-print(f'Mínimo de muestras para dividir un nodo: {classifier.min_samples_split}\n')
-print(f'Profundidad máxima del árbol: {classifier.max_depth}\n')
-print('Entrenando Modelo...\n\n')
-classifier.fit(X_train,Y_train)
-print('Imprimiendo arbol...\n\n')
+
+best_accuracy = 0.0
+best_min_samples_split = 0
+best_max_depth = 0
+
+for min_sample in range(2,9):
+    for max_depth1 in range(2,5):
+        classifier = DecisionTreeClassifier(min_samples_split = min_sample, max_depth = max_depth1)
+        classifier.fit(X_train,Y_train)
+        Y_pred = classifier.predict(X_test)
+        score = accuracy_score(Y_test, Y_pred)
+        print(f'Mínimo de muestras para dividir un nodo: {classifier.min_samples_split}\nProfundidad máxima del árbol: {classifier.max_depth}\n')
+
+        # Condiciones para determinar mejores parametros
+        if score > best_accuracy:
+            best_accuracy = score
+            best_min_samples_split = min_sample
+            best_max_depth = max_depth1
+
+print('Mejores Resultados del entrenamiento:')
+print(f'Mínimo de muestras para dividir un nodo: {best_min_samples_split}\nProfundidad máxima del árbol: {best_max_depth}\nAccuracy Score: {best_accuracy}')
+
+print('\nImprimiendo arbol...\n')
 classifier.print_tree()
 
-print('\n\nEvaluando modelo...\n\n')
-Y_pred = classifier.predict(X_test) 
-score = accuracy_score(Y_test, Y_pred)
-print(f'Accuracy Score: {score}')
 
+print('\nEvaluacion del modelo:\n\n')
+
+# Evaluacion del modelo con diferentes métricas
+Y_pred = classifier.predict(X_test)
+
+# Precision
+precision = precision_score(Y_test, Y_pred, average='weighted')
+
+# Recall
+recall = recall_score(Y_test,Y_pred, average='weighted')
+
+# F1 score
+f1 = f1_score(Y_test, Y_pred, average='weighted')
+
+# Matriz de confusion
+confusion = confusion_matrix(Y_test, Y_pred)
+print(f'Accuracy (Exactitud): {best_accuracy}')
+print(f'Precision: {precision}')
+print(f'Recall: {recall}')
+print(f'F1 Score: {f1}')
+print('Matriz de confusion:\n')
+print(confusion)
+
+
+# hacer predicciones unicamente con el mejor modelo
 print('\n\nPredicciones:\n\n')
 # Datos de prueba
 # Conjunto de 4 valores representa las 4 caracteristicas del dataset
@@ -233,7 +272,3 @@ print('\nPredicciones:')
 pred_df['predicted_type'] = predictions
 print(pred_df)
 print('\n\nInterpretación del encoding\n 0 = Iris-setosa \n 1 = Iris-versicolor \n 2 = Iris-virginica')
-
-
-
-
